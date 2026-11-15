@@ -12,15 +12,17 @@ export default function AuditPage() {
     <>
       <h1>{t('audit.title')}</h1>
       {q.isLoading ? t('common.loading') : (
-        <table>
-          <thead><tr><th>{t('audit.when')}</th><th>{t('audit.who')}</th><th>{t('audit.action')}</th><th>{t('audit.entity')}</th><th>{t('audit.summary')}</th></tr></thead>
-          <tbody>
-            {q.data?.results.map((e) => (
-              <tr key={e.id}><td>{fmt(e.occurred_at)}</td><td>{e.actor_email ?? '—'}</td><td>{e.action}{e.sensitive ? ' ⚠' : ''}</td><td>{e.entity_type}</td><td>{e.summary}</td></tr>
-            ))}
-            {q.data?.results.length === 0 && <tr><td colSpan={5}>{t('common.empty')}</td></tr>}
-          </tbody>
-        </table>
+        <div className="table-container">
+          <table>
+            <thead><tr><th>{t('audit.when')}</th><th>{t('audit.who')}</th><th>{t('audit.action')}</th><th>{t('audit.entity')}</th><th>{t('audit.summary')}</th></tr></thead>
+            <tbody>
+              {q.data?.results.map((e) => (
+                <tr key={e.id}><td>{fmt(e.occurred_at)}</td><td>{e.actor_email ?? '—'}</td><td>{e.action}{e.sensitive ? ' ⚠' : ''}</td><td>{e.entity_type}</td><td>{e.summary}</td></tr>
+              ))}
+              {q.data?.results.length === 0 && <tr><td colSpan={5}>{t('common.empty')}</td></tr>}
+            </tbody>
+          </table>
+        </div>
       )}
     </>
   )

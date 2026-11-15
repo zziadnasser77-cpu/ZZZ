@@ -25,19 +25,21 @@ export default function UsersPage() {
       </div>
       {showForm && <NewUser roles={roles.data?.results ?? []} onDone={() => { setShowForm(false); qc.invalidateQueries({ queryKey: ['users'] }) }} />}
       {users.isLoading ? t('common.loading') : (
-        <table>
-          <thead><tr><th>{t('users.email')}</th><th>{t('users.name')}</th><th>{t('users.roles')}</th><th>{t('users.status')}</th></tr></thead>
-          <tbody>
-            {users.data?.results.map((u) => (
-              <tr key={u.id}>
-                <td>{u.email}</td><td>{u.full_name}</td>
-                <td>{u.role_codes.map((c) => { const r = roles.data?.results.find((x) => x.code === c); return r ? (i18n.language === 'ar' ? r.name_ar : r.name_en) : c }).join('، ')}</td>
-                <td><span className={`badge ${u.is_active ? 'ok' : 'off'}`}>{u.is_active ? t('common.active') : t('common.inactive')}</span></td>
-              </tr>
-            ))}
-            {users.data?.results.length === 0 && <tr><td colSpan={4}>{t('common.empty')}</td></tr>}
-          </tbody>
-        </table>
+        <div className="table-container">
+          <table>
+            <thead><tr><th>{t('users.email')}</th><th>{t('users.name')}</th><th>{t('users.roles')}</th><th>{t('users.status')}</th></tr></thead>
+            <tbody>
+              {users.data?.results.map((u) => (
+                <tr key={u.id}>
+                  <td>{u.email}</td><td>{u.full_name}</td>
+                  <td>{u.role_codes.map((c) => { const r = roles.data?.results.find((x) => x.code === c); return r ? (i18n.language === 'ar' ? r.name_ar : r.name_en) : c }).join('، ')}</td>
+                  <td><span className={`badge ${u.is_active ? 'ok' : 'off'}`}>{u.is_active ? t('common.active') : t('common.inactive')}</span></td>
+                </tr>
+              ))}
+              {users.data?.results.length === 0 && <tr><td colSpan={4}>{t('common.empty')}</td></tr>}
+            </tbody>
+          </table>
+        </div>
       )}
     </>
   )

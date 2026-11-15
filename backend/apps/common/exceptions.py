@@ -1,4 +1,5 @@
 """Unified structured API errors with trace id (spec §15)."""
+
 from django.core.exceptions import PermissionDenied
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.http import Http404
@@ -37,7 +38,9 @@ def build_error_payload(exc) -> dict:
 
 def api_exception_handler(exc, context):
     if isinstance(exc, DjangoValidationError):
-        exc = exceptions.ValidationError(detail=exc.message_dict if hasattr(exc, "error_dict") else exc.messages)
+        exc = exceptions.ValidationError(
+            detail=exc.message_dict if hasattr(exc, "error_dict") else exc.messages
+        )
     elif isinstance(exc, Http404):
         exc = exceptions.NotFound()
     elif isinstance(exc, PermissionDenied):
@@ -46,7 +49,6 @@ def api_exception_handler(exc, context):
     if response is None:
         return None
     return Response(build_error_payload(exc), status=response.status_code, headers=dict(response.items()))
-
 
 
 def _message(exc):

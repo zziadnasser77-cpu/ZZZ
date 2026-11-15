@@ -26,10 +26,13 @@ class Command(BaseCommand):
     help = "Seed permissions and default role templates (idempotent)."
 
     def add_arguments(self, parser):
-        parser.add_argument("--reset-roles", action="store_true", help="Overwrite role permissions with templates")
+        parser.add_argument(
+            "--reset-roles", action="store_true", help="Overwrite role permissions with templates"
+        )
 
     @transaction.atomic
     def handle(self, *args, **opts):
         sync_rbac(opts["reset_roles"])
-        self.stdout.write(self.style.SUCCESS(
-            f"{Permission.objects.count()} permissions, {Role.objects.count()} roles."))
+        self.stdout.write(
+            self.style.SUCCESS(f"{Permission.objects.count()} permissions, {Role.objects.count()} roles.")
+        )

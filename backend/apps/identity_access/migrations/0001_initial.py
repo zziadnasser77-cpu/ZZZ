@@ -10,78 +10,144 @@ import apps.identity_access.models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Permission',
+            name="Permission",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('codename', models.CharField(max_length=100, unique=True)),
-                ('module', models.CharField(db_index=True, max_length=50)),
-                ('resource', models.CharField(max_length=50)),
-                ('action', models.CharField(max_length=20)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                ("codename", models.CharField(max_length=100, unique=True)),
+                ("module", models.CharField(db_index=True, max_length=50)),
+                ("resource", models.CharField(max_length=50)),
+                ("action", models.CharField(max_length=20)),
             ],
             options={
-                'ordering': ['codename'],
+                "ordering": ["codename"],
             },
         ),
         migrations.CreateModel(
-            name='User',
+            name="User",
             fields=[
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, db_index=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('email', models.EmailField(max_length=254, unique=True)),
-                ('full_name', models.CharField(blank=True, max_length=150)),
-                ('phone', models.CharField(blank=True, max_length=30)),
-                ('preferred_language', models.CharField(choices=[('ar', 'العربية'), ('en', 'English')], default='ar', max_length=5)),
-                ('is_active', models.BooleanField(default=True)),
-                ('is_staff', models.BooleanField(default=False)),
-                ('is_superuser', models.BooleanField(default=False)),
-                ('discount_limit_pct', models.DecimalField(blank=True, decimal_places=2, max_digits=5, null=True)),
-                ('approval_limit_amount', models.DecimalField(blank=True, decimal_places=2, max_digits=18, null=True)),
-                ('failed_login_attempts', models.PositiveSmallIntegerField(default=0)),
-                ('locked_until', models.DateTimeField(blank=True, null=True)),
-                ('mfa_enabled', models.BooleanField(default=False)),
-                ('mfa_secret', models.CharField(blank=True, max_length=64)),
-                ('created_by', models.ForeignKey(blank=True, editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('updated_by', models.ForeignKey(blank=True, editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ("password", models.CharField(max_length=128, verbose_name="password")),
+                ("last_login", models.DateTimeField(blank=True, null=True, verbose_name="last login")),
+                (
+                    "id",
+                    models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True, db_index=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("email", models.EmailField(max_length=254, unique=True)),
+                ("full_name", models.CharField(blank=True, max_length=150)),
+                ("phone", models.CharField(blank=True, max_length=30)),
+                (
+                    "preferred_language",
+                    models.CharField(
+                        choices=[("ar", "العربية"), ("en", "English")], default="ar", max_length=5
+                    ),
+                ),
+                ("is_active", models.BooleanField(default=True)),
+                ("is_staff", models.BooleanField(default=False)),
+                ("is_superuser", models.BooleanField(default=False)),
+                (
+                    "discount_limit_pct",
+                    models.DecimalField(blank=True, decimal_places=2, max_digits=5, null=True),
+                ),
+                (
+                    "approval_limit_amount",
+                    models.DecimalField(blank=True, decimal_places=2, max_digits=18, null=True),
+                ),
+                ("failed_login_attempts", models.PositiveSmallIntegerField(default=0)),
+                ("locked_until", models.DateTimeField(blank=True, null=True)),
+                ("mfa_enabled", models.BooleanField(default=False)),
+                ("mfa_secret", models.CharField(blank=True, max_length=64)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        blank=True,
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        blank=True,
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['email'],
+                "ordering": ["email"],
             },
             managers=[
-                ('objects', apps.identity_access.models.UserManager()),
+                ("objects", apps.identity_access.models.UserManager()),
             ],
         ),
         migrations.CreateModel(
-            name='Role',
+            name="Role",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, db_index=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('code', models.CharField(max_length=50, unique=True)),
-                ('name_ar', models.CharField(max_length=120)),
-                ('name_en', models.CharField(max_length=120)),
-                ('is_system', models.BooleanField(default=False, help_text='Seeded template role; cannot be deleted.')),
-                ('created_by', models.ForeignKey(blank=True, editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('permissions', models.ManyToManyField(blank=True, related_name='roles', to='identity_access.permission')),
-                ('updated_by', models.ForeignKey(blank=True, editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True, db_index=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("code", models.CharField(max_length=50, unique=True)),
+                ("name_ar", models.CharField(max_length=120)),
+                ("name_en", models.CharField(max_length=120)),
+                (
+                    "is_system",
+                    models.BooleanField(default=False, help_text="Seeded template role; cannot be deleted."),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        blank=True,
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "permissions",
+                    models.ManyToManyField(blank=True, related_name="roles", to="identity_access.permission"),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        blank=True,
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['code'],
+                "ordering": ["code"],
             },
         ),
         migrations.AddField(
-            model_name='user',
-            name='roles',
-            field=models.ManyToManyField(blank=True, related_name='users', to='identity_access.role'),
+            model_name="user",
+            name="roles",
+            field=models.ManyToManyField(blank=True, related_name="users", to="identity_access.role"),
         ),
     ]

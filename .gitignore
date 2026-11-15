@@ -7,7 +7,7 @@ dist/
 .pytest_cache/
 .ruff_cache/
 *.sqlite3
-media/
+backend/media/documents/
 staticfiles/
 _installers/
 .coverage

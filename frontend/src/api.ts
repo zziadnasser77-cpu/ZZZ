@@ -41,7 +41,7 @@ export async function api<T = unknown>(path: string, init: RequestInit & { json?
   if (init.json !== undefined) headers.set('Content-Type', 'application/json')
   if (access) headers.set('Authorization', `Bearer ${access}`)
   const res = await fetch(`/api/v1${path}`, { ...init, headers, body: init.json !== undefined ? JSON.stringify(init.json) : init.body })
-  if (res.status === 401 && retry && refresh && !path.startsWith('/auth/login')) {
+  if (res.status === 401 && retry && refresh && !path.startsWith('/auth/login') && !path.startsWith('/auth/logout') && !path.startsWith('/auth/refresh')) {
     refreshing ??= doRefresh().finally(() => (refreshing = null))
     if (await refreshing) return api<T>(path, init, false)
     setTokens(null, null)
@@ -54,6 +54,26 @@ export async function api<T = unknown>(path: string, init: RequestInit & { json?
     throw new ApiError(res.status, e?.code ?? 'error', e?.message ?? res.statusText, e?.details, e?.trace_id)
   }
   return body as T
+}
+
+/** Authenticated file download (CSV/PDF). Uses the same bearer token as api(); never a public URL. */
+export async function downloadFile(path: string, filename: string): Promise<void> {
+  const headers = new Headers()
+  if (access) headers.set('Authorization', `Bearer ${access}`)
+  let res = await fetch(`/api/v1${path}`, { headers })
+  if (res.status === 401 && refresh && (await (refreshing ??= doRefresh().finally(() => (refreshing = null))))) {
+    if (access) headers.set('Authorization', `Bearer ${access}`)
+    res = await fetch(`/api/v1${path}`, { headers })
+  }
+  if (!res.ok) throw new ApiError(res.status, 'download_failed', res.statusText)
+  const url = URL.createObjectURL(await res.blob())
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
 }
 
 export interface Page<T> { count: number; next: string | null; previous: string | null; results: T[] }

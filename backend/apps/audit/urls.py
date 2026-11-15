@@ -11,8 +11,20 @@ class AuditEventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AuditEvent
-        fields = ["id", "occurred_at", "actor", "actor_email", "action", "entity_type", "entity_id",
-                  "summary", "changes", "sensitive", "ip_address", "request_id"]
+        fields = [
+            "id",
+            "occurred_at",
+            "actor",
+            "actor_email",
+            "action",
+            "entity_type",
+            "entity_id",
+            "summary",
+            "changes",
+            "sensitive",
+            "ip_address",
+            "request_id",
+        ]
 
 
 class AuditEventViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):

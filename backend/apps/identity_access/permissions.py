@@ -1,4 +1,5 @@
 """DRF permission classes enforcing RBAC server-side (ADR-006)."""
+
 from rest_framework.permissions import BasePermission
 
 

@@ -3,7 +3,7 @@ from datetime import timedelta
 import pyotp
 from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
-from django.db import models
+from django.db import models, transaction
 from django.utils import timezone
 
 from apps.common.models import BaseModel
@@ -59,7 +59,9 @@ class User(AbstractBaseUser, BaseModel):
     email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=150, blank=True)
     phone = models.CharField(max_length=30, blank=True)
-    preferred_language = models.CharField(max_length=5, default="ar", choices=[("ar", "العربية"), ("en", "English")])
+    preferred_language = models.CharField(
+        max_length=5, default="ar", choices=[("ar", "العربية"), ("en", "English")]
+    )
     roles = models.ManyToManyField(Role, blank=True, related_name="users")
 
     is_active = models.BooleanField(default=True)
@@ -88,16 +90,26 @@ class User(AbstractBaseUser, BaseModel):
     def __str__(self):
         return self.email
 
+    def save(self, *args, **kwargs):
+        if self.email:
+            self.email = self.email.strip().lower()
+        super().save(*args, **kwargs)
+
     # --- permissions ---
     def permission_codes(self) -> set[str]:
         cached = getattr(self, "_perm_cache", None)
         if cached is None:
             cached = set(
-                Permission.objects.filter(roles__users=self, roles__users__is_active=True)
-                .values_list("codename", flat=True)
+                Permission.objects.filter(roles__users=self, roles__users__is_active=True).values_list(
+                    "codename", flat=True
+                )
             )
             self._perm_cache = cached
         return cached
+
+    def invalidate_perm_cache(self):
+        if hasattr(self, "_perm_cache"):
+            delattr(self, "_perm_cache")
 
     def has_perm_code(self, codename: str) -> bool:
         return self.is_active and codename in self.permission_codes()
@@ -115,11 +127,15 @@ class User(AbstractBaseUser, BaseModel):
         return bool(self.locked_until and self.locked_until > timezone.now())
 
     def register_failed_login(self):
-        self.failed_login_attempts += 1
-        if self.failed_login_attempts >= settings.LOGIN_MAX_FAILED_ATTEMPTS:
-            self.locked_until = timezone.now() + timedelta(minutes=settings.LOGIN_LOCKOUT_MINUTES)
-            self.failed_login_attempts = 0
-        self.save(update_fields=["failed_login_attempts", "locked_until"])
+        with transaction.atomic():
+            locked = User.objects.select_for_update().get(pk=self.pk)
+            locked.failed_login_attempts += 1
+            if locked.failed_login_attempts >= settings.LOGIN_MAX_FAILED_ATTEMPTS:
+                locked.locked_until = timezone.now() + timedelta(minutes=settings.LOGIN_LOCKOUT_MINUTES)
+                locked.failed_login_attempts = 0
+            locked.save(update_fields=["failed_login_attempts", "locked_until"])
+            self.failed_login_attempts = locked.failed_login_attempts
+            self.locked_until = locked.locked_until
 
     def reset_failed_logins(self):
         if self.failed_login_attempts or self.locked_until:

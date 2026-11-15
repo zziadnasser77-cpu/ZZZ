@@ -8,7 +8,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -17,23 +16,39 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='AuditEvent',
+            name="AuditEvent",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('occurred_at', models.DateTimeField(auto_now_add=True, db_index=True)),
-                ('action', models.CharField(db_index=True, max_length=80)),
-                ('entity_type', models.CharField(blank=True, db_index=True, max_length=80)),
-                ('entity_id', models.CharField(blank=True, db_index=True, max_length=64)),
-                ('summary', models.CharField(blank=True, max_length=300)),
-                ('changes', models.JSONField(blank=True, null=True)),
-                ('sensitive', models.BooleanField(default=False)),
-                ('ip_address', models.GenericIPAddressField(blank=True, null=True)),
-                ('request_id', models.CharField(blank=True, max_length=64)),
-                ('actor', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
+                ),
+                ("occurred_at", models.DateTimeField(auto_now_add=True, db_index=True)),
+                ("action", models.CharField(db_index=True, max_length=80)),
+                ("entity_type", models.CharField(blank=True, db_index=True, max_length=80)),
+                ("entity_id", models.CharField(blank=True, db_index=True, max_length=64)),
+                ("summary", models.CharField(blank=True, max_length=300)),
+                ("changes", models.JSONField(blank=True, null=True)),
+                ("sensitive", models.BooleanField(default=False)),
+                ("ip_address", models.GenericIPAddressField(blank=True, null=True)),
+                ("request_id", models.CharField(blank=True, max_length=64)),
+                (
+                    "actor",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-occurred_at'],
-                'indexes': [models.Index(fields=['entity_type', 'entity_id', '-occurred_at'], name='audit_audit_entity__0b6e19_idx')],
+                "ordering": ["-occurred_at"],
+                "indexes": [
+                    models.Index(
+                        fields=["entity_type", "entity_id", "-occurred_at"],
+                        name="audit_audit_entity__0b6e19_idx",
+                    )
+                ],
             },
         ),
     ]

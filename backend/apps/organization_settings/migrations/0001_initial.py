@@ -8,7 +8,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -17,47 +16,99 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='DocumentSequence',
+            name="DocumentSequence",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, db_index=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('doc_type', models.CharField(max_length=40)),
-                ('year', models.PositiveSmallIntegerField(default=0, help_text='0 = never resets')),
-                ('branch', models.CharField(blank=True, max_length=20)),
-                ('prefix', models.CharField(max_length=20)),
-                ('pattern', models.CharField(default='{prefix}-{year}-{seq:06d}', max_length=80)),
-                ('next_value', models.PositiveBigIntegerField(default=1)),
-                ('created_by', models.ForeignKey(blank=True, editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('updated_by', models.ForeignKey(blank=True, editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True, db_index=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("doc_type", models.CharField(max_length=40)),
+                ("year", models.PositiveSmallIntegerField(default=0, help_text="0 = never resets")),
+                ("branch", models.CharField(blank=True, max_length=20)),
+                ("prefix", models.CharField(max_length=20)),
+                ("pattern", models.CharField(default="{prefix}-{year}-{seq:06d}", max_length=80)),
+                ("next_value", models.PositiveBigIntegerField(default=1)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        blank=True,
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        blank=True,
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'constraints': [models.UniqueConstraint(fields=('doc_type', 'year', 'branch'), name='uniq_doc_sequence')],
+                "constraints": [
+                    models.UniqueConstraint(fields=("doc_type", "year", "branch"), name="uniq_doc_sequence")
+                ],
             },
         ),
         migrations.CreateModel(
-            name='OrganizationProfile',
+            name="OrganizationProfile",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True, db_index=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('singleton', models.BooleanField(default=True, editable=False, unique=True)),
-                ('legal_name_ar', models.CharField(blank=True, max_length=200)),
-                ('legal_name_en', models.CharField(blank=True, max_length=200)),
-                ('trade_name', models.CharField(blank=True, max_length=200)),
-                ('commercial_register_no', models.CharField(blank=True, max_length=60)),
-                ('tax_no', models.CharField(blank=True, max_length=60)),
-                ('address', models.TextField(blank=True)),
-                ('phone', models.CharField(blank=True, max_length=40)),
-                ('email', models.EmailField(blank=True, max_length=254)),
-                ('logo_url', models.CharField(blank=True, max_length=300)),
-                ('base_currency', models.CharField(default='YER', max_length=3)),
-                ('default_language', models.CharField(default='ar', max_length=5)),
-                ('created_by', models.ForeignKey(blank=True, editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('updated_by', models.ForeignKey(blank=True, editable=False, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='+', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True, db_index=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("singleton", models.BooleanField(default=True, editable=False, unique=True)),
+                ("legal_name_ar", models.CharField(blank=True, max_length=200)),
+                ("legal_name_en", models.CharField(blank=True, max_length=200)),
+                ("trade_name", models.CharField(blank=True, max_length=200)),
+                ("commercial_register_no", models.CharField(blank=True, max_length=60)),
+                ("tax_no", models.CharField(blank=True, max_length=60)),
+                ("address", models.TextField(blank=True)),
+                ("phone", models.CharField(blank=True, max_length=40)),
+                ("email", models.EmailField(blank=True, max_length=254)),
+                ("logo_url", models.CharField(blank=True, max_length=300)),
+                ("base_currency", models.CharField(default="YER", max_length=3)),
+                ("default_language", models.CharField(default="ar", max_length=5)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        blank=True,
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "updated_by",
+                    models.ForeignKey(
+                        blank=True,
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="+",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'constraints': [models.CheckConstraint(condition=models.Q(('singleton', True)), name='org_profile_singleton')],
+                "constraints": [
+                    models.CheckConstraint(
+                        condition=models.Q(("singleton", True)), name="org_profile_singleton"
+                    )
+                ],
             },
         ),
     ]

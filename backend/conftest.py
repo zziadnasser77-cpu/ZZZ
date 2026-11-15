@@ -10,6 +10,7 @@ PASSWORD = "Str0ng-Pass-123!"
 @pytest.fixture(autouse=True)
 def _clear_throttle_cache():
     from django.core.cache import cache
+
     cache.clear()
     yield
 
@@ -25,6 +26,7 @@ def make_user(rbac):
         u = User.objects.create_user(email=email, password=PASSWORD, **kw)
         u.roles.set(Role.objects.filter(code__in=roles))
         return u
+
     return _make
 
 
@@ -40,4 +42,5 @@ def auth_client(api):
         assert r.status_code == 200, r.content
         api.credentials(HTTP_AUTHORIZATION=f"Bearer {r.data['access']}")
         return api
+
     return _auth

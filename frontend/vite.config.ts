@@ -21,10 +21,34 @@ export default defineConfig({
       workbox: {
         // App shell is cached; API responses are never cached, so financial/stock data is never stale (ADR-016).
         navigateFallbackDenylist: [/^\/api\//],
-        runtimeCaching: [],
+        runtimeCaching: [
+          {
+            // Cache medical equipment images and PDFs locally on the device (phone/laptop) for 30 days
+            urlPattern: ({ url }) => url.pathname.startsWith('/media/'),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'medical-images-cache',
+              expiration: {
+                maxEntries: 500,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days local cache
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+        ],
       },
     }),
   ],
-  server: { port: 5173, proxy: { '/api': 'http://localhost:8000' } },
+  server: {
+    port: 5173,
+    host: true,
+    allowedHosts: true,
+    proxy: {
+      '/api': 'http://127.0.0.1:8000',
+      '/media': 'http://127.0.0.1:8000',
+    },
+  },
   test: { environment: 'jsdom', globals: true, setupFiles: './src/test-setup.ts' },
 })

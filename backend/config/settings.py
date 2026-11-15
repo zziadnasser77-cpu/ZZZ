@@ -1,4 +1,5 @@
 """SMSES settings (single-company Modular Monolith, ADR-001/039)."""
+
 from datetime import timedelta
 from pathlib import Path
 
@@ -16,6 +17,8 @@ environ.Env.read_env(BASE_DIR / ".env")
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 ALLOWED_HOSTS = env("ALLOWED_HOSTS")
+if DEBUG:
+    ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -35,6 +38,20 @@ INSTALLED_APPS = [
     "apps.identity_access",
     "apps.audit",
     "apps.organization_settings",
+    "apps.crm",
+    "apps.catalog",
+    "apps.pricing",
+    "apps.quotations",
+    "apps.sales_orders",
+    "apps.procurement",
+    "apps.shipments",
+    "apps.inventory",
+    "apps.accounting",
+    "apps.payments",
+    "apps.biomedical",
+    "apps.documents_ai",
+    "apps.notifications",
+    "apps.reporting",
 ]
 
 MIDDLEWARE = [
@@ -97,6 +114,12 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+# Reverse proxy hops (0 = do not trust X-Forwarded-For from clients)
+NUM_PROXIES = env.int("NUM_PROXIES", default=0)
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ["apps.identity_access.authentication.ContextJWTAuthentication"],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
@@ -111,6 +134,7 @@ REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "apps.common.exceptions.api_exception_handler",
     "DEFAULT_THROTTLE_CLASSES": ["rest_framework.throttling.AnonRateThrottle"],
     "DEFAULT_THROTTLE_RATES": {"anon": "60/min", "login": "10/min"},
+    "NUM_PROXIES": NUM_PROXIES,
 }
 
 SIMPLE_JWT = {
@@ -146,12 +170,16 @@ if not DEBUG:
 # Celery (ADR-039)
 CELERY_BROKER_URL = env("REDIS_URL", default="redis://localhost:6379/0")
 CELERY_TASK_ALWAYS_EAGER = env.bool("CELERY_EAGER", default=DEBUG)
+GEMINI_API_KEY = env("GEMINI_API_KEY", default="")
+
 
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {"std": {"format": "%(asctime)s %(levelname)s [%(request_id)s] %(name)s: %(message)s"}},
     "filters": {"request_id": {"()": "apps.common.middleware.RequestIdFilter"}},
-    "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "std", "filters": ["request_id"]}},
+    "handlers": {
+        "console": {"class": "logging.StreamHandler", "formatter": "std", "filters": ["request_id"]}
+    },
     "root": {"handlers": ["console"], "level": "INFO"},
 }
