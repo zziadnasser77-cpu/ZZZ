@@ -27,9 +27,11 @@ export function setTokens(a: string | null, r: string | null) {
 export const hasSession = () => !!access
 export const setLogoutHandler = (fn: () => void) => (onLogout = fn)
 
+const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
+
 async function doRefresh(): Promise<boolean> {
   if (!refresh) return false
-  const res = await fetch('/api/v1/auth/refresh/', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ refresh }) })
+  const res = await fetch(`${API_BASE}/api/v1/auth/refresh/`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ refresh }) })
   if (!res.ok) return false
   const data = await res.json()
   setTokens(data.access, data.refresh)
@@ -40,7 +42,7 @@ export async function api<T = unknown>(path: string, init: RequestInit & { json?
   const headers = new Headers(init.headers)
   if (init.json !== undefined) headers.set('Content-Type', 'application/json')
   if (access) headers.set('Authorization', `Bearer ${access}`)
-  const res = await fetch(`/api/v1${path}`, { ...init, headers, body: init.json !== undefined ? JSON.stringify(init.json) : init.body })
+  const res = await fetch(`${API_BASE}/api/v1${path}`, { ...init, headers, body: init.json !== undefined ? JSON.stringify(init.json) : init.body })
   if (res.status === 401 && retry && refresh && !path.startsWith('/auth/login') && !path.startsWith('/auth/logout') && !path.startsWith('/auth/refresh')) {
     refreshing ??= doRefresh().finally(() => (refreshing = null))
     if (await refreshing) return api<T>(path, init, false)
