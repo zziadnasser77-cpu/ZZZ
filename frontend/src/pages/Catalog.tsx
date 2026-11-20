@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { api, type Page } from '../api'
+import { api, type Page, resolveImageUrl } from '../api'
 
 interface ProductModel {
   id: string
@@ -114,6 +114,7 @@ export default function CatalogPage() {
   const [isSubmittingQuote, setIsSubmittingQuote] = useState(false)
   const [quoteSubmitError, setQuoteSubmitError] = useState<string | null>(null)
   const [createdQuoteSuccess, setCreatedQuoteSuccess] = useState<any | null>(null)
+  const [visibleCount, setVisibleCount] = useState(24)
 
   // Lock body scroll when any modal is open
   useEffect(() => {
@@ -232,6 +233,16 @@ export default function CatalogPage() {
       return true
     })
   }, [allDeviceItems, selectedCategory, pricingFilter, searchQuery])
+
+  // Reset pagination when search/category/pricing filter changes
+  useEffect(() => {
+    setVisibleCount(24)
+  }, [selectedCategory, pricingFilter, searchQuery])
+
+  // Sliced devices for smooth mobile & desktop rendering
+  const displayedDevices = useMemo(() => {
+    return filteredDevices.slice(0, visibleCount)
+  }, [filteredDevices, visibleCount])
 
   // Counts for summary
   const pricedCount = useMemo(
@@ -461,7 +472,7 @@ export default function CatalogPage() {
             >
               {vendorCatalogues.map((doc) => {
                 const isCatalogue = doc.document_type === 'CATALOG_BROCHURE'
-                const fileUrl = doc.file ? (doc.file.startsWith('http') ? doc.file : `/media/${doc.file}`) : null
+                const fileUrl = doc.file ? resolveImageUrl(doc.file) : null
 
                 return (
                   <div
@@ -823,8 +834,8 @@ export default function CatalogPage() {
             /* YOUTUBE STYLE PRODUCT CARDS GRID                                          */
             /* ========================================================================= */
             <div className="product-grid">
-              {filteredDevices.map(({ product, model }) => {
-                const img = model.display_image || product.display_image
+              {displayedDevices.map(({ product, model }) => {
+                const img = resolveImageUrl(model.display_image || product.display_image)
                 const isPriced = !!model.approved_price
                 const priceVal = model.approved_price?.base_price
 
@@ -839,7 +850,18 @@ export default function CatalogPage() {
                         <img
                           src={img}
                           alt={product.name_ar}
+                          loading="lazy"
+                          decoding="async"
                           className="product-thumbnail-img"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none'
+                            if (e.currentTarget.parentElement) {
+                              const fb = document.createElement('div')
+                              fb.style.fontSize = '3.5rem'
+                              fb.textContent = '🩺'
+                              e.currentTarget.parentElement.appendChild(fb)
+                            }
+                          }}
                         />
                       ) : (
                         <div style={{ fontSize: '3.5rem' }}>🩺</div>
@@ -926,6 +948,18 @@ export default function CatalogPage() {
                   لم يتم العثور على أجهزة مطابقة لشروط البحث والتصفية.
                 </div>
               )}
+
+              {visibleCount < filteredDevices.length && (
+                <div style={{ gridColumn: '1 / -1', textAlign: 'center', marginTop: '1.5rem', marginBottom: '2rem' }}>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => setVisibleCount((prev) => prev + 24)}
+                    style={{ padding: '0.75rem 2.5rem', fontSize: '1rem', fontWeight: 700, borderRadius: '8px' }}
+                  >
+                    عرض المزيد من الأجهزة ({displayedDevices.length} من {filteredDevices.length}) ↓
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             /* ========================================================================= */
@@ -945,8 +979,8 @@ export default function CatalogPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredDevices.map(({ product, model }) => {
-                    const img = model.display_image || product.display_image
+                  {displayedDevices.map(({ product, model }) => {
+                    const img = resolveImageUrl(model.display_image || product.display_image)
                     const isPriced = !!model.approved_price
                     const priceVal = model.approved_price?.base_price
 
@@ -972,7 +1006,17 @@ export default function CatalogPage() {
                               <img
                                 src={img}
                                 alt={product.name_ar}
+                                loading="lazy"
+                                decoding="async"
                                 style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none'
+                                  if (e.currentTarget.parentElement) {
+                                    const fb = document.createElement('span')
+                                    fb.textContent = '🩺'
+                                    e.currentTarget.parentElement.appendChild(fb)
+                                  }
+                                }}
                               />
                             ) : (
                               <span>🩺</span>
@@ -1061,6 +1105,17 @@ export default function CatalogPage() {
                   )}
                 </tbody>
               </table>
+              {visibleCount < filteredDevices.length && (
+                <div style={{ textAlign: 'center', marginTop: '1.5rem', marginBottom: '1.5rem' }}>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={() => setVisibleCount((prev) => prev + 24)}
+                    style={{ padding: '0.75rem 2.5rem', fontSize: '1rem', fontWeight: 700, borderRadius: '8px' }}
+                  >
+                    عرض المزيد من الأجهزة ({displayedDevices.length} من {filteredDevices.length}) ↓
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -1155,8 +1210,10 @@ export default function CatalogPage() {
               >
                 {selectedModelDetail.model.display_image || selectedModelDetail.product.display_image ? (
                   <img
-                    src={selectedModelDetail.model.display_image || selectedModelDetail.product.display_image || ''}
+                    src={resolveImageUrl(selectedModelDetail.model.display_image || selectedModelDetail.product.display_image)}
                     alt={selectedModelDetail.product.name_ar}
+                    loading="lazy"
+                    decoding="async"
                     style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                   />
                 ) : (
@@ -1502,8 +1559,10 @@ export default function CatalogPage() {
                   >
                     {quoteModalItem.model.display_image || quoteModalItem.product.display_image ? (
                       <img
-                        src={quoteModalItem.model.display_image || quoteModalItem.product.display_image || ''}
+                        src={resolveImageUrl(quoteModalItem.model.display_image || quoteModalItem.product.display_image)}
                         alt={quoteModalItem.product.name_ar}
+                        loading="lazy"
+                        decoding="async"
                         style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                       />
                     ) : (

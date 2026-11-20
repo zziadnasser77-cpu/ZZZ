@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from apps.catalog.serializers import _build_full_url
+
 from apps.common.serializers import CostRestrictedMixin
 
 from .models import (
@@ -109,16 +111,17 @@ class SerialAssetSerializer(CostRestrictedMixin, serializers.ModelSerializer):
         if not obj.model:
             return None
         request = self.context.get("request")
+        img = None
         if obj.model.image:
-            return request.build_absolute_uri(obj.model.image.url) if request else obj.model.image.url
-        if obj.model.image_url:
-            return obj.model.image_url
-        if hasattr(obj.model, "product") and obj.model.product:
+            img = obj.model.image.url
+        elif obj.model.image_url:
+            img = obj.model.image_url
+        elif hasattr(obj.model, "product") and obj.model.product:
             if obj.model.product.image:
-                return request.build_absolute_uri(obj.model.product.image.url) if request else obj.model.product.image.url
-            if obj.model.product.image_url:
-                return obj.model.product.image_url
-        return None
+                img = obj.model.product.image.url
+            elif obj.model.product.image_url:
+                img = obj.model.product.image_url
+        return _build_full_url(img, request)
 
     def get_current_ownership(self, obj):
         rec = obj.ownership_history.filter(is_current=True).first()

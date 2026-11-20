@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import { api, type Page } from '../api'
+import { api, type Page, resolveImageUrl } from '../api'
 
 interface SalesOrderLine {
   id: string
@@ -136,8 +136,10 @@ export default function DealsPage() {
                           <td style={{ textAlign: 'center', padding: '0.35rem' }}>
                             {l.display_image ? (
                               <img
-                                src={l.display_image}
+                                src={resolveImageUrl(l.display_image)}
                                 alt={l.model_name}
+                                loading="lazy"
+                                decoding="async"
                                 style={{ width: '40px', height: '40px', objectFit: 'contain', borderRadius: '4px', border: '1px solid #e2e8f0', background: '#f8fafc' }}
                               />
                             ) : (

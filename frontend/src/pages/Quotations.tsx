@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
-import { api, ApiError, type Page } from '../api'
+import { api, ApiError, type Page, resolveImageUrl } from '../api'
 import { useAuth } from '../auth'
 
 interface QuotationLine {
@@ -447,8 +447,10 @@ export default function QuotationsPage() {
                         <td style={{ textAlign: 'center', padding: '0.4rem' }}>
                           {l.display_image ? (
                             <img
-                              src={l.display_image}
+                              src={resolveImageUrl(l.display_image)}
                               alt={l.model_name}
+                              loading="lazy"
+                              decoding="async"
                               style={{ width: '44px', height: '44px', objectFit: 'contain', borderRadius: '6px', border: '1px solid #e2e8f0' }}
                             />
                           ) : (
@@ -659,7 +661,7 @@ export default function QuotationsPage() {
                                 }}
                               >
                                 {sel.display_image ? (
-                                  <img src={sel.display_image} alt={sel.model_name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                                  <img src={resolveImageUrl(sel.display_image)} alt={sel.model_name} loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                                 ) : (
                                   <span style={{ fontSize: '1.2rem' }}>🩺</span>
                                 )}
@@ -854,8 +856,10 @@ export default function QuotationsPage() {
                     <td style={{ padding: '0.6rem', textAlign: 'center' }}>
                       {l.display_image ? (
                         <img
-                          src={l.display_image}
+                          src={resolveImageUrl(l.display_image)}
                           alt={l.model_name}
+                          loading="lazy"
+                          decoding="async"
                           style={{ width: '48px', height: '48px', objectFit: 'contain', borderRadius: '4px', border: '1px solid #e2e8f0', background: '#f8fafc' }}
                         />
                       ) : (

@@ -3,6 +3,17 @@ from rest_framework import serializers
 from .models import Category, Manufacturer, Product, ProductModel
 
 
+def _build_full_url(url: str | None, request) -> str | None:
+    if not url:
+        return None
+    if url.startswith("http://") or url.startswith("https://"):
+        return url
+    if request:
+        return request.build_absolute_uri(url)
+    clean_path = url if url.startswith("/") else f"/{url}"
+    return f"https://smses-backend.onrender.com{clean_path}"
+
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -67,16 +78,17 @@ class ProductModelSerializer(serializers.ModelSerializer):
 
     def get_display_image(self, obj):
         request = self.context.get("request")
+        img = None
         if obj.image:
-            return request.build_absolute_uri(obj.image.url) if request else obj.image.url
-        if obj.image_url:
-            return obj.image_url
-        if hasattr(obj, "product") and obj.product:
+            img = obj.image.url
+        elif obj.image_url:
+            img = obj.image_url
+        elif hasattr(obj, "product") and obj.product:
             if obj.product.image:
-                return request.build_absolute_uri(obj.product.image.url) if request else obj.product.image.url
-            if obj.product.image_url:
-                return obj.product.image_url
-        return None
+                img = obj.product.image.url
+            elif obj.product.image_url:
+                img = obj.product.image_url
+        return _build_full_url(img, request)
 
     def get_approved_price(self, obj):
         item = obj.price_list_items.filter(price_list__is_active=True, price_list__is_default=True).first()
@@ -124,14 +136,16 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_display_image(self, obj):
         request = self.context.get("request")
+        img = None
         if obj.image:
-            return request.build_absolute_uri(obj.image.url) if request else obj.image.url
-        if obj.image_url:
-            return obj.image_url
-        first_model = obj.models.first()
-        if first_model:
-            if first_model.image:
-                return request.build_absolute_uri(first_model.image.url) if request else first_model.image.url
-            if first_model.image_url:
-                return first_model.image_url
-        return None
+            img = obj.image.url
+        elif obj.image_url:
+            img = obj.image_url
+        else:
+            first_model = obj.models.first()
+            if first_model:
+                if first_model.image:
+                    img = first_model.image.url
+                elif first_model.image_url:
+                    img = first_model.image_url
+        return _build_full_url(img, request)

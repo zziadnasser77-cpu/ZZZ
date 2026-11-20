@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import { api, type Page } from '../api'
+import { api, type Page, resolveImageUrl } from '../api'
 
 interface SerialAsset {
   id: string
@@ -98,8 +98,10 @@ export default function InventoryPage() {
                     <td style={{ textAlign: 'center', padding: '0.4rem' }}>
                       {a.display_image ? (
                         <img
-                          src={a.display_image}
+                          src={resolveImageUrl(a.display_image)}
                           alt={a.model_name}
+                          loading="lazy"
+                          decoding="async"
                           style={{ width: '42px', height: '42px', objectFit: 'contain', borderRadius: '4px', border: '1px solid #e2e8f0', background: '#f8fafc' }}
                         />
                       ) : (

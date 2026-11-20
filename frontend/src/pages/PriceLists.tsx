@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { api, type Page } from '../api'
+import { api, type Page, resolveImageUrl } from '../api'
 import { useAuth } from '../auth'
 
 interface PriceListItem {
@@ -243,8 +243,10 @@ export default function PriceListsPage() {
                           <td style={{ textAlign: 'center', padding: '0.4rem' }}>
                             {it.display_image ? (
                               <img
-                                src={it.display_image}
+                                src={resolveImageUrl(it.display_image)}
                                 alt={it.model_name}
+                                loading="lazy"
+                                decoding="async"
                                 style={{ width: '42px', height: '42px', objectFit: 'contain', borderRadius: '4px', border: '1px solid #e2e8f0', background: '#f8fafc' }}
                               />
                             ) : (

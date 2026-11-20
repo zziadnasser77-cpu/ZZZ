@@ -27,7 +27,14 @@ export function setTokens(a: string | null, r: string | null) {
 export const hasSession = () => !!access
 export const setLogoutHandler = (fn: () => void) => (onLogout = fn)
 
-const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
+export const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
+
+export function resolveImageUrl(url?: string | null): string {
+  if (!url) return ''
+  if (url.startsWith('http://') || url.startsWith('https://')) return url
+  const clean = url.startsWith('/') ? url : `/${url}`
+  return `${API_BASE}${clean}`
+}
 
 async function doRefresh(): Promise<boolean> {
   if (!refresh) return false
