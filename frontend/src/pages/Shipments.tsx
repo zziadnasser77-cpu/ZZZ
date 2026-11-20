@@ -34,8 +34,14 @@ export default function ShipmentsPage() {
 
   return (
     <>
-      <div className="bar">
-        <h1>{t('shipments.title')}</h1>
+      <div className="page-header">
+        <div className="page-header-title">
+          <span className="page-header-icon">🚢</span>
+          <div>
+            <h1>{t('shipments.title')}</h1>
+            <p>متابعة الشحنات الدولية والتخليص الجمركي ومسار الشحن حتى الوصول</p>
+          </div>
+        </div>
       </div>
 
       {isLoading ? (

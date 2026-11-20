@@ -243,7 +243,15 @@ export default function AccountingPage() {
 
   return (
     <div className="accounting-page">
-      <h2>{t('accounting.title')}</h2>
+      <div className="page-header">
+        <div className="page-header-title">
+          <span className="page-header-icon">⚖️</span>
+          <div>
+            <h1>{t('accounting.title')}</h1>
+            <p>القيود المحاسبية، شجرة الحسابات (COA)، ميزان المراجعة، وأسعار صرف العملات</p>
+          </div>
+        </div>
+      </div>
 
       <div className="tabs">
         <button className={tab === 'entries' ? 'active' : ''} onClick={() => setTab('entries')}>

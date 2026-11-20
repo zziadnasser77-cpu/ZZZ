@@ -51,8 +51,14 @@ export default function DealsPage() {
 
   return (
     <>
-      <div className="bar">
-        <h1>{t('deals.title')}</h1>
+      <div className="page-header">
+        <div className="page-header-title">
+          <span className="page-header-icon">🤝</span>
+          <div>
+            <h1>{t('deals.title')}</h1>
+            <p>متابعة الصفقات التجارية المغلقة وأوامر البيع الرسمية للعملاء</p>
+          </div>
+        </div>
       </div>
 
       {isLoading ? (

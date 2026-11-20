@@ -278,14 +278,15 @@ export default function QuotationsPage() {
 
   return (
     <>
-      <div className="bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
-        <div>
-          <h1 style={{ margin: 0 }}>{t('quotations.title')}</h1>
-          <p style={{ margin: '0.25rem 0 0', color: 'var(--muted)', fontSize: '0.85rem' }}>
-            عروض الأسعار الطبية المعتمدة للعملاء والمستشفيات مع المواصفات والأسعار
-          </p>
+      <div className="page-header">
+        <div className="page-header-title">
+          <span className="page-header-icon">📑</span>
+          <div>
+            <h1>{t('quotations.title')}</h1>
+            <p>عروض الأسعار الطبية المعتمدة للعملاء والمستشفيات مع المواصفات والأسعار</p>
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div className="page-header-actions">
           {can('quotations.quotation.create') && (
             <button className="btn" onClick={() => setShowCreateModal(true)}>
               + إنشاء عرض سعر رسمي
@@ -494,65 +495,52 @@ export default function QuotationsPage() {
 
       {/* CREATE QUOTATION MODAL */}
       {showCreateModal && createPortal(
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(15, 23, 42, 0.7)',
-            backdropFilter: 'blur(5px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 99999,
-            padding: '1rem',
-          }}
-          onClick={() => setShowCreateModal(false)}
-        >
-          <div
-            className="card"
-            style={{ width: 'min(860px, 95vw)', maxHeight: '90vh', overflowY: 'auto', borderRadius: '12px', background: '#ffffff' }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
-              <h3 style={{ margin: 0, color: '#0f172a' }}>إنشاء وإصدار عرض سعر رسمي للعميل</h3>
-              <button className="btn secondary" onClick={() => setShowCreateModal(false)}>✕</button>
+        <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
+          <div className="modal-card large" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 className="modal-title">
+                <span>📑</span>
+                <span>إنشاء وإصدار عرض سعر رسمي للعميل</span>
+              </h3>
+              <button className="modal-close-btn" onClick={() => setShowCreateModal(false)}>✕</button>
             </div>
 
-            {prefillNotice && (
-              <div
-                style={{
-                  background: '#ecfdf5',
-                  border: '1px solid #6ee7b7',
-                  color: '#065f46',
-                  padding: '0.75rem 1rem',
-                  borderRadius: '8px',
-                  marginBottom: '1rem',
-                  fontSize: '0.9rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <div>
-                  <strong>{prefillNotice}</strong>
-                </div>
-                <button
+            <div className="modal-body">
+              {prefillNotice && (
+                <div
                   style={{
-                    background: 'none',
-                    border: 'none',
+                    background: '#ecfdf5',
+                    border: '1px solid #6ee7b7',
                     color: '#065f46',
-                    cursor: 'pointer',
-                    fontWeight: 'bold',
-                    fontSize: '1rem',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '8px',
+                    marginBottom: '1rem',
+                    fontSize: '0.9rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
                   }}
-                  onClick={() => setPrefillNotice(null)}
                 >
-                  ✕
-                </button>
-              </div>
-            )}
+                  <div>
+                    <strong>{prefillNotice}</strong>
+                  </div>
+                  <button
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#065f46',
+                      cursor: 'pointer',
+                      fontWeight: 'bold',
+                      fontSize: '1rem',
+                    }}
+                    onClick={() => setPrefillNotice(null)}
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div className="form-grid two-cols" style={{ marginBottom: '1rem' }}>
               <div className="field">
                 <label>العميل / المستشفى المستفيد *</label>
                 <select
@@ -683,6 +671,7 @@ export default function QuotationsPage() {
                           <input
                             type="number"
                             min="1"
+                            className="cell-input"
                             value={line.quantity}
                             onChange={(e) => {
                               const newLines = [...quoteForm.lines]
@@ -695,6 +684,7 @@ export default function QuotationsPage() {
                           <input
                             type="number"
                             step="0.01"
+                            className="cell-input"
                             value={line.unit_price}
                             onChange={(e) => {
                               const newLines = [...quoteForm.lines]
@@ -708,6 +698,7 @@ export default function QuotationsPage() {
                             type="number"
                             min="0"
                             max="100"
+                            className="cell-input"
                             value={line.discount_pct}
                             onChange={(e) => {
                               const newLines = [...quoteForm.lines]
@@ -719,6 +710,7 @@ export default function QuotationsPage() {
                         <td>
                           <input
                             type="number"
+                            className="cell-input"
                             value={line.warranty_months}
                             onChange={(e) => {
                               const newLines = [...quoteForm.lines]
@@ -756,24 +748,25 @@ export default function QuotationsPage() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '0.5rem' }}>
-              <div className="field">
-                <label>شروط الدفع</label>
-                <input
-                  value={quoteForm.payment_terms}
-                  onChange={(e) => setQuoteForm({ ...quoteForm, payment_terms: e.target.value })}
-                />
-              </div>
-              <div className="field">
-                <label>شروط التسليم والضمان</label>
-                <input
-                  value={quoteForm.delivery_terms}
-                  onChange={(e) => setQuoteForm({ ...quoteForm, delivery_terms: e.target.value })}
-                />
+              <div className="form-grid two-cols" style={{ marginTop: '0.5rem' }}>
+                <div className="field">
+                  <label>شروط الدفع</label>
+                  <input
+                    value={quoteForm.payment_terms}
+                    onChange={(e) => setQuoteForm({ ...quoteForm, payment_terms: e.target.value })}
+                  />
+                </div>
+                <div className="field">
+                  <label>شروط التسليم والضمان</label>
+                  <input
+                    value={quoteForm.delivery_terms}
+                    onChange={(e) => setQuoteForm({ ...quoteForm, delivery_terms: e.target.value })}
+                  />
+                </div>
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1.25rem', borderTop: '1px solid #e2e8f0', paddingTop: '0.75rem' }}>
+            <div className="modal-footer">
               <button className="btn secondary" onClick={() => setShowCreateModal(false)}>
                 {t('common.cancel')}
               </button>

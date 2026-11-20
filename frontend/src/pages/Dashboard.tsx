@@ -200,16 +200,19 @@ export default function Dashboard() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-        <div>
-          <h1>{t('dashboard.welcome')}, {me?.full_name || me?.email}</h1>
-          <p style={{ margin: 0, color: 'var(--muted)', fontSize: '0.9rem' }}>
-            {t('dashboard.title')} • {summary?.as_of_date || new Date().toISOString().split('T')[0]}
-          </p>
+      <div className="page-header">
+        <div className="page-header-title">
+          <span className="page-header-icon">📊</span>
+          <div>
+            <h1>{t('dashboard.welcome')}, {me?.full_name || me?.email}</h1>
+            <p>{t('dashboard.title')} • {summary?.as_of_date || new Date().toISOString().split('T')[0]}</p>
+          </div>
         </div>
-        <button className="btn secondary" onClick={loadSummary} disabled={loading}>
-          {loading ? t('common.loading') : `↻ ${t('dashboard.refresh')}`}
-        </button>
+        <div className="page-header-actions">
+          <button className="btn secondary" onClick={loadSummary} disabled={loading}>
+            {loading ? t('common.loading') : `↻ ${t('dashboard.refresh')}`}
+          </button>
+        </div>
       </div>
 
       {/* KPI METRICS GRID */}
@@ -290,32 +293,32 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* TABS NAVIGATION */}
-      <div className="toolbar" style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.5rem', marginBottom: '1rem', overflowX: 'auto' }}>
-        <button className={`btn ${tab === 'overview' ? '' : 'secondary'}`} onClick={() => setTab('overview')}>
-          {t('dashboard.tabs.overview')}
+      {/* UNIFIED TABS NAVIGATION */}
+      <div className="tabs">
+        <button className={tab === 'overview' ? 'active' : ''} onClick={() => setTab('overview')}>
+          📈 {t('dashboard.tabs.overview')}
         </button>
         {can('reporting.commercial.view') && (
-          <button className={`btn ${tab === 'pipeline' ? '' : 'secondary'}`} onClick={() => setTab('pipeline')}>
-            {t('dashboard.tabs.pipeline')}
+          <button className={tab === 'pipeline' ? 'active' : ''} onClick={() => setTab('pipeline')}>
+            💼 {t('dashboard.tabs.pipeline')}
           </button>
         )}
         {can('reporting.biomedical.view') && (
-          <button className={`btn ${tab === 'biomedical' ? '' : 'secondary'}`} onClick={() => setTab('biomedical')}>
-            {t('dashboard.tabs.biomedical')}
+          <button className={tab === 'biomedical' ? 'active' : ''} onClick={() => setTab('biomedical')}>
+            🔧 {t('dashboard.tabs.biomedical')}
           </button>
         )}
         {can('reporting.biomedical.view') && (
-          <button className={`btn ${tab === 'warranties' ? '' : 'secondary'}`} onClick={() => setTab('warranties')}>
-            {t('dashboard.tabs.warranties')}
+          <button className={tab === 'warranties' ? 'active' : ''} onClick={() => setTab('warranties')}>
+            🛡️ {t('dashboard.tabs.warranties')}
           </button>
         )}
         {can('reporting.inventory.view') && (
-          <button className={`btn ${tab === 'logistics' ? '' : 'secondary'}`} onClick={() => setTab('logistics')}>
-            {t('dashboard.tabs.logistics')}
+          <button className={tab === 'logistics' ? 'active' : ''} onClick={() => setTab('logistics')}>
+            🚚 {t('dashboard.tabs.logistics')}
           </button>
         )}
-        <button className={`btn ${tab === 'exports' ? '' : 'secondary'}`} onClick={() => setTab('exports')}>
+        <button className={tab === 'exports' ? 'active' : ''} onClick={() => setTab('exports')}>
           📥 {t('dashboard.tabs.exports')}
         </button>
       </div>

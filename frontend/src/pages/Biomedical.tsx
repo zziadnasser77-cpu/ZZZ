@@ -371,7 +371,15 @@ export default function BiomedicalPage() {
 
   return (
     <div className="biomedical-page">
-      <h2>{t('biomedical.title')}</h2>
+      <div className="page-header">
+        <div className="page-header-title">
+          <span className="page-header-icon">🔧</span>
+          <div>
+            <h1>{t('biomedical.title')}</h1>
+            <p>الهندسة الطبية الحيوية، تذاكر الصيانة الدورية والطارئة، بروتوكولات الفحص، والضمانات</p>
+          </div>
+        </div>
+      </div>
 
       <div className="tabs">
         <button className={tab === 'tickets' ? 'active' : ''} onClick={() => setTab('tickets')}>

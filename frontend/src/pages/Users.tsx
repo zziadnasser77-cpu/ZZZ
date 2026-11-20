@@ -18,10 +18,29 @@ export default function UsersPage() {
 
   return (
     <>
-      <h1>{t('users.title')}</h1>
-      <div className="toolbar">
-        <input placeholder={t('common.search')} value={q} onChange={(e) => setQ(e.target.value)} />
-        {can('identity.user.create') && <button className="btn" onClick={() => setShowForm((v) => !v)}>{t('users.new')}</button>}
+      <div className="page-header">
+        <div className="page-header-title">
+          <span className="page-header-icon">👥</span>
+          <div>
+            <h1>{t('users.title')}</h1>
+            <p>إدارة المستخدمين، الصلاحيات، الأدوار الوظيفية، وحالة الحسابات</p>
+          </div>
+        </div>
+        <div className="page-header-actions">
+          {can('identity.user.create') && (
+            <button className="btn" onClick={() => setShowForm((v) => !v)}>
+              {showForm ? t('common.cancel') : `+ ${t('users.new')}`}
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="filter-bar">
+        <div className="search-input-wrapper">
+          <span className="search-input-icon">🔍</span>
+          <input placeholder={t('common.search')} value={q} onChange={(e) => setQ(e.target.value)} />
+          {q && <button className="search-clear-btn" onClick={() => setQ('')}>✕</button>}
+        </div>
       </div>
       {showForm && <NewUser roles={roles.data?.results ?? []} onDone={() => { setShowForm(false); qc.invalidateQueries({ queryKey: ['users'] }) }} />}
       {users.isLoading ? t('common.loading') : (

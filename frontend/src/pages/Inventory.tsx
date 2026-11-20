@@ -60,19 +60,26 @@ export default function InventoryPage() {
 
   return (
     <>
-      <div className="bar">
-        <h1>{t('inventory.title')}</h1>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button className={`btn ${activeTab === 'assets' ? 'ok' : ''}`} onClick={() => setActiveTab('assets')}>
-            {t('inventory.assetsTab')}
-          </button>
-          <button className={`btn ${activeTab === 'movements' ? 'ok' : ''}`} onClick={() => setActiveTab('movements')}>
-            {t('inventory.movementsTab')}
-          </button>
-          <button className={`btn ${activeTab === 'locations' ? 'ok' : ''}`} onClick={() => setActiveTab('locations')}>
-            {t('inventory.locationsTab')}
-          </button>
+      <div className="page-header">
+        <div className="page-header-title">
+          <span className="page-header-icon">📦</span>
+          <div>
+            <h1>{t('inventory.title')}</h1>
+            <p>إدارة مخزون الأجهزة الطبية بالأرقام التسلسلية، الحركات المخزنية، والمستودعات</p>
+          </div>
         </div>
+      </div>
+
+      <div className="tabs">
+        <button className={activeTab === 'assets' ? 'active' : ''} onClick={() => setActiveTab('assets')}>
+          🩺 {t('inventory.assetsTab')}
+        </button>
+        <button className={activeTab === 'movements' ? 'active' : ''} onClick={() => setActiveTab('movements')}>
+          🔄 {t('inventory.movementsTab')}
+        </button>
+        <button className={activeTab === 'locations' ? 'active' : ''} onClick={() => setActiveTab('locations')}>
+          📍 {t('inventory.locationsTab')}
+        </button>
       </div>
 
       {activeTab === 'assets' && (

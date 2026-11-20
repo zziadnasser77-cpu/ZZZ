@@ -10,7 +10,15 @@ export default function AuditPage() {
   const fmt = (s: string) => new Date(s).toLocaleString(i18n.language === 'ar' ? 'ar-YE' : 'en-GB')
   return (
     <>
-      <h1>{t('audit.title')}</h1>
+      <div className="page-header">
+        <div className="page-header-title">
+          <span className="page-header-icon">📜</span>
+          <div>
+            <h1>{t('audit.title')}</h1>
+            <p>سجل الرقابة والأمان وتتبع العمليات وتدقيق الأحداث في النظام</p>
+          </div>
+        </div>
+      </div>
       {q.isLoading ? t('common.loading') : (
         <div className="table-container">
           <table>

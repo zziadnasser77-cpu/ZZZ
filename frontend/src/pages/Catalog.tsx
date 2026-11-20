@@ -334,34 +334,17 @@ export default function CatalogPage() {
 
   return (
     <div className="fade-in">
-      {/* PAGE HEADER & TOP CONTROLS (Engineered Alignment) */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '1.25rem',
-          flexWrap: 'wrap',
-          gap: '1rem',
-          paddingBottom: '1rem',
-          borderBottom: '1px solid var(--border)',
-        }}
-      >
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <span style={{ fontSize: '1.8rem' }}>🔬</span>
-            <div>
-              <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.3px' }}>
-                الكتالوج الطبي وقاعدة بيانات الأجهزة
-              </h1>
-              <p style={{ margin: '0.2rem 0 0', color: 'var(--muted)', fontSize: '0.85rem' }}>
-                الكتالوج الشامل المعتمد — أجهزة ومعدات طب العيون، جراحة المناظير، والمستلزمات الطبية والتعقيم (HEROMAX / HAS)
-              </p>
-            </div>
+      {/* PAGE HEADER */}
+      <div className="page-header" style={{ paddingBottom: '1rem', borderBottom: '1px solid var(--border)' }}>
+        <div className="page-header-title">
+          <span className="page-header-icon">🔬</span>
+          <div>
+            <h1>الكتالوج الطبي وقاعدة بيانات الأجهزة</h1>
+            <p>الكتالوج الشامل المعتمد — أجهزة ومعدات طب العيون، جراحة المناظير، والمستلزمات الطبية والتعقيم</p>
           </div>
         </div>
 
-        {/* PRIMARY SEGMENTED TABS (Apple / YouTube Studio Style) */}
+        {/* PRIMARY SEGMENTED TABS */}
         <div className="segmented-control">
           <button
             className={`segmented-tab ${activeTab === 'devices' ? 'active' : ''}`}
@@ -643,147 +626,98 @@ export default function CatalogPage() {
             })}
           </div>
 
-          {/* 2. TOOLBAR: SEARCH & PRICING FILTER CHIPS & VIEW SWITCH */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '0.85rem',
-              marginBottom: '1rem',
-              background: '#ffffff',
-              padding: '0.75rem 1rem',
-              borderRadius: 'var(--radius-lg)',
-              border: '1px solid var(--border)',
-            }}
-          >
+          {/* 2. UNIFIED FILTER & SEARCH BAR */}
+          <div className="filter-bar">
             {/* Search Input */}
-            <div style={{ flex: '1 1 260px', position: 'relative' }}>
-              <span
-                style={{
-                  position: 'absolute',
-                  right: '12px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: '#94a3b8',
-                }}
-              >
-                🔍
-              </span>
+            <div className="search-input-wrapper">
+              <span className="search-input-icon">🔍</span>
               <input
                 type="text"
-                style={{
-                  width: '100%',
-                  padding: '0.5rem 2.2rem 0.5rem 2rem',
-                  borderRadius: '8px',
-                  border: '1px solid var(--border)',
-                  fontSize: '0.88rem',
-                  background: '#f8fafc',
-                }}
                 placeholder="ابحث باسم الجهاز، رمز الموديل، الـ SKU، أو المواصفة..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  style={{
-                    position: 'absolute',
-                    left: '10px',
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    color: '#94a3b8',
-                    fontSize: '0.85rem',
-                  }}
-                >
-                  ✕
-                </button>
+                <button className="search-clear-btn" onClick={() => setSearchQuery('')}>✕</button>
               )}
             </div>
 
-            {/* Pricing Filter Chips */}
-            <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
-              <button
-                className={`chip ${pricingFilter === 'ALL' ? 'active' : ''}`}
-                style={{ padding: '0.35rem 0.75rem', fontSize: '0.82rem' }}
-                onClick={() => setPricingFilter('ALL')}
-              >
-                جميع الحالات
-              </button>
-              <button
-                className={`chip ${pricingFilter === 'PRICED' ? 'active' : ''}`}
-                style={{
-                  padding: '0.35rem 0.75rem',
-                  fontSize: '0.82rem',
-                  borderColor: pricingFilter === 'PRICED' ? '#16a34a' : undefined,
-                  background: pricingFilter === 'PRICED' ? '#16a34a' : undefined,
-                  color: pricingFilter === 'PRICED' ? '#ffffff' : '#15803d',
-                }}
-                onClick={() => setPricingFilter('PRICED')}
-              >
-                🏷️ مسعّرة معتمدة ({pricedCount})
-              </button>
-              <button
-                className={`chip ${pricingFilter === 'UNPRICED' ? 'active' : ''}`}
-                style={{
-                  padding: '0.35rem 0.75rem',
-                  fontSize: '0.82rem',
-                  borderColor: pricingFilter === 'UNPRICED' ? '#d97706' : undefined,
-                  background: pricingFilter === 'UNPRICED' ? '#d97706' : undefined,
-                  color: pricingFilter === 'UNPRICED' ? '#ffffff' : '#b45309',
-                }}
-                onClick={() => setPricingFilter('UNPRICED')}
-              >
-                ⏳ بانتظار التسعيرة ({unpricedCount})
-              </button>
-            </div>
+            {/* Filter Actions */}
+            <div className="filter-actions">
+              <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
+                <button
+                  className={`chip ${pricingFilter === 'ALL' ? 'active' : ''}`}
+                  onClick={() => setPricingFilter('ALL')}
+                >
+                  جميع الحالات
+                </button>
+                <button
+                  className={`chip ${pricingFilter === 'PRICED' ? 'active' : ''}`}
+                  style={{
+                    borderColor: pricingFilter === 'PRICED' ? '#16a34a' : undefined,
+                    background: pricingFilter === 'PRICED' ? '#16a34a' : undefined,
+                    color: pricingFilter === 'PRICED' ? '#ffffff' : '#15803d',
+                  }}
+                  onClick={() => setPricingFilter('PRICED')}
+                >
+                  🏷️ مسعّرة ({pricedCount})
+                </button>
+                <button
+                  className={`chip ${pricingFilter === 'UNPRICED' ? 'active' : ''}`}
+                  style={{
+                    borderColor: pricingFilter === 'UNPRICED' ? '#d97706' : undefined,
+                    background: pricingFilter === 'UNPRICED' ? '#d97706' : undefined,
+                    color: pricingFilter === 'UNPRICED' ? '#ffffff' : '#b45309',
+                  }}
+                  onClick={() => setPricingFilter('UNPRICED')}
+                >
+                  ⏳ بانتظار التسعيرة ({unpricedCount})
+                </button>
+              </div>
 
-            {/* View Switch Buttons */}
-            <div
-              style={{
-                display: 'flex',
-                background: '#f1f5f9',
-                padding: '2px',
-                borderRadius: '8px',
-                border: '1px solid #e2e8f0',
-              }}
-            >
-              <button
-                onClick={() => setViewMode('cards')}
+              {/* View Switch Buttons */}
+              <div
                 style={{
-                  border: 'none',
-                  padding: '0.35rem 0.65rem',
-                  borderRadius: '6px',
-                  background: viewMode === 'cards' ? '#ffffff' : 'transparent',
-                  cursor: 'pointer',
-                  fontSize: '0.85rem',
-                  fontWeight: viewMode === 'cards' ? 700 : 500,
-                  boxShadow: viewMode === 'cards' ? '0 1px 2px rgba(0,0,0,0.08)' : 'none',
+                  display: 'flex',
+                  background: '#f1f5f9',
+                  padding: '2px',
+                  borderRadius: '8px',
+                  border: '1px solid #e2e8f0',
                 }}
-                title="عرض بطاقات مرئية"
               >
-                🎴 بطاقات
-              </button>
-              <button
-                onClick={() => setViewMode('table')}
-                style={{
-                  border: 'none',
-                  padding: '0.35rem 0.65rem',
-                  borderRadius: '6px',
-                  background: viewMode === 'table' ? '#ffffff' : 'transparent',
-                  cursor: 'pointer',
-                  fontSize: '0.85rem',
-                  fontWeight: viewMode === 'table' ? 700 : 500,
-                  boxShadow: viewMode === 'table' ? '0 1px 2px rgba(0,0,0,0.08)' : 'none',
-                }}
-                title="عرض جدول تفصيلي"
-              >
-                📋 جدول
-              </button>
+                <button
+                  onClick={() => setViewMode('cards')}
+                  style={{
+                    border: 'none',
+                    padding: '0.35rem 0.65rem',
+                    borderRadius: '6px',
+                    background: viewMode === 'cards' ? '#ffffff' : 'transparent',
+                    cursor: 'pointer',
+                    fontSize: '0.85rem',
+                    fontWeight: viewMode === 'cards' ? 700 : 500,
+                    boxShadow: viewMode === 'cards' ? '0 1px 2px rgba(0,0,0,0.08)' : 'none',
+                  }}
+                  title="عرض بطاقات مرئية"
+                >
+                  🎴 بطاقات
+                </button>
+                <button
+                  onClick={() => setViewMode('table')}
+                  style={{
+                    border: 'none',
+                    padding: '0.35rem 0.65rem',
+                    borderRadius: '6px',
+                    background: viewMode === 'table' ? '#ffffff' : 'transparent',
+                    cursor: 'pointer',
+                    fontSize: '0.85rem',
+                    fontWeight: viewMode === 'table' ? 700 : 500,
+                    boxShadow: viewMode === 'table' ? '0 1px 2px rgba(0,0,0,0.08)' : 'none',
+                  }}
+                  title="عرض جدول تفصيلي"
+                >
+                  📋 جدول
+                </button>
+              </div>
             </div>
           </div>
 

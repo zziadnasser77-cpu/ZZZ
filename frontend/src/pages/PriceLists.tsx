@@ -145,17 +145,18 @@ export default function PriceListsPage() {
 
   return (
     <>
-      <div className="bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
-        <div>
-          <h1 style={{ margin: 0 }}>{t('pricing.title')}</h1>
-          <p style={{ margin: '0.25rem 0 0', color: 'var(--muted)', fontSize: '0.85rem' }}>
-            قوائم الأسعار الرسمية والعملات وسقوف الخصومات المعتمدة
-          </p>
+      <div className="page-header">
+        <div className="page-header-title">
+          <span className="page-header-icon">🏷️</span>
+          <div>
+            <h1>{t('pricing.title')}</h1>
+            <p>قوائم الأسعار الرسمية والعملات وسقوف الخصومات المعتمدة</p>
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+        <div className="page-header-actions">
           <Link to="/documents" className="btn secondary" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-            <span>📄</span>
-            <span>رفع قائمة أسعار بالذكاء الاصطناعي (AI Gateway)</span>
+            <span>🤖</span>
+            <span>رفع قائمة أسعار بالذكاء الاصطناعي</span>
           </Link>
           {can('pricing.pricelist.create') && (
             <button className="btn" onClick={() => setShowAddListModal(true)}>

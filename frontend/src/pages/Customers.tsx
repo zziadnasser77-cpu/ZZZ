@@ -29,13 +29,21 @@ export default function CustomersPage() {
 
   return (
     <>
-      <div className="bar">
-        <h1>{t('customers.title')}</h1>
-        {can('crm.customer.create') && (
-          <button className="btn" onClick={() => setShowNew((v) => !v)}>
-            {showNew ? t('common.cancel') : t('customers.new')}
-          </button>
-        )}
+      <div className="page-header">
+        <div className="page-header-title">
+          <span className="page-header-icon">🏥</span>
+          <div>
+            <h1>{t('customers.title')}</h1>
+            <p>سجل العملاء والمستشفيات والمراكز الطبية المعتمدة في المحافظات</p>
+          </div>
+        </div>
+        <div className="page-header-actions">
+          {can('crm.customer.create') && (
+            <button className="btn" onClick={() => setShowNew((v) => !v)}>
+              {showNew ? t('common.cancel') : `+ ${t('customers.new')}`}
+            </button>
+          )}
+        </div>
       </div>
 
       {showNew && <NewCustomer onDone={() => { setShowNew(false); qc.invalidateQueries({ queryKey: ['customers'] }) }} />}
@@ -111,36 +119,41 @@ function NewCustomer({ onDone }: { onDone: () => void }) {
   }
 
   return (
-    <form className="card" onSubmit={submit} style={{ marginBlockEnd: '1rem' }}>
-      <div className="field">
-        <label>{t('customers.name')}</label>
-        <input required value={f.legal_name_ar} onChange={(e) => setF({ ...f, legal_name_ar: e.target.value })} />
-      </div>
-      <div className="field">
-        <label>{t('customers.type')}</label>
-        <select value={f.customer_type} onChange={(e) => setF({ ...f, customer_type: e.target.value })}>
-          <option value="HOSPITAL">{t('customers.types.HOSPITAL')}</option>
-          <option value="MEDICAL_CENTER">{t('customers.types.MEDICAL_CENTER')}</option>
-          <option value="CLINIC">{t('customers.types.CLINIC')}</option>
-          <option value="GOVERNMENT">{t('customers.types.GOVERNMENT')}</option>
-          <option value="DISTRIBUTOR">{t('customers.types.DISTRIBUTOR')}</option>
-          <option value="OTHER">{t('customers.types.OTHER')}</option>
-        </select>
-      </div>
-      <div className="field">
-        <label>{t('customers.governorate')}</label>
-        <input value={f.governorate} onChange={(e) => setF({ ...f, governorate: e.target.value })} />
-      </div>
-      <div className="field">
-        <label>{t('customers.phone')}</label>
-        <input value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} />
-      </div>
-      <div className="field">
-        <label>{t('customers.email')}</label>
-        <input type="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} />
+    <form className="card" onSubmit={submit} style={{ marginBlockEnd: '1.25rem', borderInlineStart: '4px solid var(--blue)' }}>
+      <h3 style={{ margin: '0 0 1rem', color: '#0f172a' }}>إضافة عميل أو مستشفى جديد</h3>
+      <div className="form-grid two-cols">
+        <div className="field">
+          <label>{t('customers.name')} *</label>
+          <input required placeholder="اسم المستشفى أو المركز الطبي" value={f.legal_name_ar} onChange={(e) => setF({ ...f, legal_name_ar: e.target.value })} />
+        </div>
+        <div className="field">
+          <label>{t('customers.type')}</label>
+          <select value={f.customer_type} onChange={(e) => setF({ ...f, customer_type: e.target.value })}>
+            <option value="HOSPITAL">{t('customers.types.HOSPITAL')}</option>
+            <option value="MEDICAL_CENTER">{t('customers.types.MEDICAL_CENTER')}</option>
+            <option value="CLINIC">{t('customers.types.CLINIC')}</option>
+            <option value="GOVERNMENT">{t('customers.types.GOVERNMENT')}</option>
+            <option value="DISTRIBUTOR">{t('customers.types.DISTRIBUTOR')}</option>
+            <option value="OTHER">{t('customers.types.OTHER')}</option>
+          </select>
+        </div>
+        <div className="field">
+          <label>{t('customers.governorate')}</label>
+          <input placeholder="مثال: صنعاء، عدن، تعز..." value={f.governorate} onChange={(e) => setF({ ...f, governorate: e.target.value })} />
+        </div>
+        <div className="field">
+          <label>{t('customers.phone')}</label>
+          <input placeholder="رقم الهاتف للتواصل" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} />
+        </div>
+        <div className="field">
+          <label>{t('customers.email')}</label>
+          <input type="email" placeholder="example@hospital.ye" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} />
+        </div>
       </div>
       {err && <div className="error" role="alert">{err}</div>}
-      <button className="btn" disabled={m.isPending}>{t('common.save')}</button>
+      <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+        <button className="btn" disabled={m.isPending}>{t('common.save')}</button>
+      </div>
     </form>
   )
 }

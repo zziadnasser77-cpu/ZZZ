@@ -219,7 +219,15 @@ export default function PaymentsPage() {
 
   return (
     <div className="payments-page">
-      <h2>{t('payments.title')}</h2>
+      <div className="page-header">
+        <div className="page-header-title">
+          <span className="page-header-icon">💳</span>
+          <div>
+            <h1>{t('payments.title')}</h1>
+            <p>فواتير المبيعات، فواتير المشتريات، سندات القبض والصرف، والحسابات البنكية</p>
+          </div>
+        </div>
+      </div>
 
       <div className="tabs">
         <button className={tab === 'invoices' ? 'active' : ''} onClick={() => setTab('invoices')}>

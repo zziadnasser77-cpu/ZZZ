@@ -28,8 +28,14 @@ export default function ProcurementPage() {
 
   return (
     <>
-      <div className="bar">
-        <h1>{t('procurement.title')}</h1>
+      <div className="page-header">
+        <div className="page-header-title">
+          <span className="page-header-icon">🏭</span>
+          <div>
+            <h1>{t('procurement.title')}</h1>
+            <p>إدارة طلبات الشراء من الموردين والمصانع المعتمدة ومتابعة التوريد</p>
+          </div>
+        </div>
       </div>
 
       {isLoading ? (
